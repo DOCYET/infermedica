@@ -102,13 +102,21 @@ module Infermedica
     # conditions required to refine the diagnosis
     # See examples/diagnosis.rb for an example
     def diagnosis(diag)
-      response = @connection.post('/diagnosis', diag.to_json)
+      @connection.post('/diagnosis', diag.to_json)
     end
 
     # Submit a diagnosis object to get a triage
     # See examples/triage.rb for an example
     def triage(diag)
-      response = @connection.post('/triage', diag.to_json)
+      @connection.post('/triage', diag.to_json)
+    end
+
+    def parse(utterance)
+      @connection.post('/parse', { text: utterance }.to_json)
+    end
+    
+    def suggest(params)
+      @connection.post('/suggest', params.to_json)
     end
 
     # Submit a diagnosis object to get an explanation
@@ -148,7 +156,7 @@ module Infermedica
       raise ArgumentError, 'api_id is required' unless args.key?(:api_id)
       raise ArgumentError, 'api_key is required' unless args.key?(:api_key)
 
-      connection_args = { api_id: args[:api_id], api_key: args[:api_key] }
+      connection_args = { api_id: args[:api_id], api_key: args[:api_key], model: args.fetch(:model, 'infermedica-en') }
       connection_args[:endpoint] = args[:endpoint] if args.key?(:endpoint)
       @connection = Connection.new(connection_args)
 
